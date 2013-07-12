@@ -67,11 +67,36 @@ class Sentimental
     tokens.each do |token|
       sentiment_total += @@sentihash[token]
     end
+
     sentiment_total
   end
 
+
+  def get_score_normalized(string)
+    sentiment_total = 0.0
+    num_senti_words = 0
+
+    tokens = string.to_s.downcase.split(/[\s\!\?\.]+/)
+
+    tokens.each do |token|
+      sentiment_total += @@sentihash[token]
+
+      if @@sentihash.include? token
+        num_senti_words = num_senti_words + 1
+      end  
+    
+    end
+    
+    sentiment_total / (num_senti_words.nonzero? || 1) 
+  
+  end
+
+
   def get_sentiment(string)
-    score = get_score(string)
+    # score = get_score(string)
+    score = get_score_normalized(string)
+
+    puts "Test String: #{string} \nScore: #{score}"
 
     # if less then the negative threshold classify negative
     if score < (-1 * @threshold)
